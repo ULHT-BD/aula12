@@ -55,9 +55,32 @@ Para assegurar a integridade dos dados, a BD deve garantir as propriedades ACID:
 
 
 ## 2. Anomalias e Níveis de Isolamento
-Em SQL podemos efetuar operações entre vários conjuntos. 
+A execução concorrente de várias transações pode conduzir a várias anomalias bem conhecidas Dirty Read, Non-Repeatable Read e Phantom Read.
+
+Consoante a aplicação a desenvolver, podemos querer tolerar/permitir a ocorrência de algumas destas anomalias ou assegurar um maior nível de isolamento.
+
+A tabela resume as anomalias e níveis de isolamento:
+
+<img width="552" alt="image" src="https://user-images.githubusercontent.com/32137262/207202337-6c54effa-a76e-4200-9b10-6af2669d2048.png">
+
+Em SQL podemos alterar o nível de isolamento de forma global, durante a sessão ou apenas para a transação, usando:
+
+``` sql
+SET [GLOBAL | SESSION] TRANSACTION ISOLATION LEVEL level;
+```
+
+Exemplo, para alterar nivel de isolamento da sessão para repeatable read
+``` sql
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+```
 
 ## 3. Transações em SQL
+No MySQL o autocommit está ligado por default, o que significa que todas as instruções são executadas como uma transação quando é encontrado o caracter ```;```. Podemos desligar este mecanismo usando:
+
+``` sql
+SET autocommit=0;
+```
+
 Em SQL podemos as cláusulas ```START TRANSACTION``` inicia uma transação e a cláusula ```COMMIT``` termina e executa a transação.
 
 ``` sql
@@ -89,17 +112,7 @@ Para cada uma das alíneas seguintes, escreva a query que permite obter:
 
 
 ## 4. Trabalho de Casa
-Nesta aula grande parte dos alunos não conseguiram terminar os exercícios propostos. Assim o trabalho de casa serão os 3 últimos exercícios sobre subqueries (1.8, 1.9 e 1.10):
-
-8. Quais os empregados (id primeiro nome e salario) que recebem acima da média e trabalham no mesmo departamento onde algum nome empregado contenha a letra 'J'.
-
-9. Quais os empregados (primeiro nome) que trabalham nos departamentos de United Kingdom.
-
-10. Quais os empregados (primeiro nome, último nome, salário e job id) que recebem acima da média de salários para a sua função.
-
-Bom trabalho!
-
-NOTA: submeta a sua resposta ao trabalho de casa no moodle contendo as queries que respondem às questões num script sql. O ficheiro de texto com o nome TPC_a11_[N_ALUNO].sql (exemplo: TPC_a11_12345.sql para o aluno número 12345).
+(a publicar)
 
 ## 5. Resoluções
 [Resolução dos exercícios em aula](https://github.com/ULHT-BD/aula11/blob/main/aula11_resolucao.sql)
