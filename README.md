@@ -105,10 +105,36 @@ O estado da base de dados é reposto para o ponto anterior à transação.
 Podemos inclusivamente definir pontos chave (savepoints) até onde queremos reverter usando a cláusula ```SAVEPOINT nome-savepoint```. Podemos escolher até onde deve ir o rollback usando ```ROLLBACK TO SAVEPOINT nome-savepoint```.
 
 ### Exercícios
-Para cada uma das alíneas seguintes, escreva a query que permite obter:
-1. Uma única lista com os nomes próprios dos trabalhadores que trabalham em departamentos de it e dos apelidos dos trabalhadores de Marketing.
-2. A lista de nomes próprios que coexistam no departamentos de IT e de Finance.
-3. A lista de nomes próprios apenas de trabalhadores não managers, i.e. excluindo os nomes de managers.
+Abra duas sessões/tabs com scripts diferentes no DBeaver. Sugestão no topo adicione um comentário sessão1 ou sessão2
+1. Verifique o funcionamento do autocommit. Execute os comandos pela ordem indicada:
+  * Na sessão 1, desligue o autocommit
+  * Na sessão 1, verifique o nome do empregado cujo id é 100
+  * Na sessão 2, verifique o nome do empregado cujo id é 100
+  * Na sessão 1, altere o nome do empregado para Cristiano Ronaldo e verifique que os dados foram atualizados
+  * Na sessão 2, verifique o nome do empregado cujo id é 100 (qual a conclusão?)
+  * Na sessão 1, execute a transação e verifique o resultado
+  * Na sessão 2, verifique o nome do empregado cujo id é 100 (qual a conclusão?)
+2. Volte a executar a sequência de passos descrita no exercício anterior mas no penúltimo passo reverta a transação em vez de executa-la.
+3. Testar funcionamento de uma transação
+  * Na sessão 1, volte a ligar o autocommit
+  * Na sessão 1, inicie uma transação   
+  * Na sessão 1, verifique o nome do empregado cujo id é 100
+  * Na sessão 2, verifique o nome do empregado cujo id é 100
+  * Na sessão 1, altere o nome do empregado para Fernando Santos e verifique que os dados foram atualizados
+  * Na sessão 2, verifique o nome do empregado cujo id é 100 (qual a conclusão?)
+  * Na sessão 1, execute a transação e verifique o resultado
+  * Na sessão 2, verifique o nome do empregado cujo id é 100 (qual a conclusão?)
+4. Volte a executar a sequência de passos descrita no exercício anterior mas no penúltimo passo reverta a transação em vez de executa-la.
+5. Testar funcionamento do nível de isolamento
+  * Na sessão 1, altere o nível de isolamento global para read uncommitted
+  * Na sessão 1, inicie uma transação   
+  * Na sessão 1, verifique o nome do empregado cujo id é 100
+  * Na sessão 2, verifique o nome do empregado cujo id é 100
+  * Na sessão 1, altere o nome do empregado para Diogo Costa e verifique que os dados foram atualizados
+  * Na sessão 2, verifique o nome do empregado cujo id é 100 (qual a conclusão?)
+  * Na sessão 1, reverta a transação e verifique o resultado
+  * Na sessão 2, verifique o nome do empregado cujo id é 100 (qual a conclusão?) 
+6. Volte a executar a sequência de passos descrita no exercício anterior para verificar o resultado quando o nível de isolamento é read commited e repeatable read.
 
 
 ## 4. Trabalho de Casa
