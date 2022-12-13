@@ -124,8 +124,8 @@ NOTA: submeta a sua resposta ao trabalho de casa no moodle contendo as queries q
 [Resolução dos exercícios em aula](https://github.com/ULHT-BD/aula11/blob/main/aula11_resolucao.sql)
 
 ## Bibliografia e Referências
-* [Slides aula (+material extra)](https://github.com/ULHT-BD/aula11/blob/main/Aula11.pdf) 
-* [Subqueries in mysql.com](https://dev.mysql.com/doc/refman/8.0/en/subqueries.html)
+* [Slides aula](https://github.com/ULHT-BD/aula12/blob/main/Aula12.pdf) 
+* [Isolation Levels - Medium]((https://medium.com/analytics-vidhya/understanding-mysql-transaction-isolation-levels-by-example-1d56fce66b3d))
 
 
 ## Outros
