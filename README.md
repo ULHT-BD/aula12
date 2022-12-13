@@ -1,17 +1,18 @@
 # aula12
-Na aula passada olhámos para junções horizontais e como podemos obter conteúdo obtido a partir de várias tabelas, quando relacionado através de chaves estrangeiras, utilizando a cláusula ```JOIN```.
-Nesta aula vemos outra forma de realizar junções como podemos combinar resultados de operações sobre conjuntos e sobre outra junções verticais e como.
+Nesta introduzimos o conceito de transação, propriedades ACID e níveis de isolamento. Aprendemos ainda as cláusulas SQL que nos permitem criar e executar transações bem como configurar diferentes níveis de isolamento.
 Bom trabalho!
 
 [0. Requisitos](#0-requisitos)
 
-[1. Nested Queries](#1-nested-queries)
+[1. Transação e Propriedades Acid](#1-transação-e-propriedades-acid)
 
-[2. Operações UNION, INTERSECT e MINUS](#2-operações-union-intersect-e-minus)
+[2. Anomalias e Níveis de Isolamento](#2-anomalias-e-níveis-de-isolamento)
 
-[3. Trabalho de Casa](#3-trabalho-de-casa)
+[3. Transações em SQL](#3-transações-em-sql)
 
-[4. Resoluções](#4-resoluções)
+[4. Trabalho de Casa](#4-trabalho-de-casa)
+
+[5. Resoluções](#5-resoluções)
 
 [Bibliografia e Referências](#bibliografia-e-referências)
 
@@ -25,80 +26,39 @@ Caso já tenha o docker pode iniciá-lo usando o comando ```docker start mysgbd`
 
 Deve também ter o cliente DBeaver.
 
-## 1. Nested Queries
-Nested queries ou subqueries consistem em queries onde um SELECT contém outro SELECT. Podemos ter vários nested queries com vários níveis de SELECT encadeados, por exemplo
+## 1. Transação e Propriedades Acid
+Uma transação consiste na execução de um conjunto de instruções que acede e possivelmente altera dados e que deve ser executada de forma atómica. Um exemplo de transação é a transferência de 50€ entre uma conta bancária A e outra conta bancária B uma vez que envolve uma sequência de instruções de leitura e escrita do saldo.
 
-``` sql
-SELECT * FROM t1 
-WHERE t1.id IN (
-  SELECT t2.id FROM t2 
-  WHERE t2.id IN (
-    SELECT t3.id FROM t3
-  )
-);
+Exemplo:
+```
+Read(A)
+A := A – 50
+Write(A)
+Read(B)
+B := B + 50
+Write(B)
 ```
 
-As vantagens na utilização de nested queries são o melhor isolamento das diferentes partes da query, alternativa mais simples a operações JOIN muito complexas e logo com maior facilidade de leitura. No entanto, estas queries são normalmente muito dificeis de otimizar pelos Sistemas de Gestão de Base de Dados pelo que podem comprometer a performance.
-
-A query interna pode aparecer em várias localizações da query externa, exemplo
-
-``` sql
-SELECT 
-  nome, 
-  (SELECT nome FROM t2 WHERE id = 1) nome_t2 
-FROM t1;
-```
+O fluxo de execução de uma transação pode ser descrito por uma máquina de estados, composta por 5 estados, bem definidos:
+<img width="577" alt="image" src="https://user-images.githubusercontent.com/32137262/207198610-ea64864c-bd67-4ccc-93fb-fa6589c16701.png">
 
 
-``` sql
-SELECT 
-  * 
-FROM 
-  (SELECT * FROM t1 WHERE id > 10) t2
-WHERE id < 20;
-```
+Para assegurar a integridade dos dados, a BD deve garantir as propriedades ACID:
+
+* Atomicidade – conjunto é realizado ou nada é realizado
+
+* Consistência – execução de transações em isolamento preserva consistência de dados
+
+* Isolamento –transações devem ignorar existência de transações concorrentes 
+
+* Durabilidade – conclusão da transação implica dados persistentes
 
 
-``` sql
-SELECT * FROM t1 
-WHERE t1.id IN (
-  SELECT t2.id FROM t2);
-```
-
-As palavras chave ```ALL```, ```ANY``` ou ```IN``` podem ser usadas para filtrar conjuntos de tuplos com as operações comparação existentes:
-|Operador|Descrição|Exemplo|
-|--------|---------|-------|
-|ALL|Necessita satisfazer a expressão para todos os tuplos resultado da subquery|``` SELECT eid	FROM inscrito WHERE nota > ALL(SELECT nota FROM inscritos WHERE uid = 222); ```|
-|ANY|Necessita satisfazer a expressão para pelo menos um tuplo resultado da subquery|``` SELECT nome	FROM estudante	WHERE	eid = ANY(SELECT eid	FROM inscrito	WHERE uid=215);```|
-|IN|Equivalente a ‘=ANY()’ (valor de atributo contido na subquery)|```SELECT eid, nome	FROM	estudante,	WHERE eid IN (SELECT MAX(eid)	FROM inscritos);```|
-
-
-### Exercícios
-Considere a Base de Dados hr que usou nas aulas anteriores. Usando nested queries, escreva a query SQL que permite responder cada uma das seguintes questões:
-
-1. Quais os empregados (primeiro nome e último nome) que recebem um salário superior ao empregado cujo id é 163
-2. Quais os empregados (primeiro nome, último nome, salário e departamento id) que recebem salário igual ao salário mínimo de algum departamento.
-3. Quais os empregados (id, primeiro nome, último nome) dos empregados que ganham acima do salário médio
-4. Quais os empregados (primeiro nome, departamento id, job id e nome do departamento) dos empregados que trabalham no departamento Finance.
-5. Quais os empregados cujo salário está acima da média mas abaixo de 10000.
-6. Quais os empregados que não trabalham nos departamentos dos managers cujo id é entre 100 e 200.
-7. Quais os empregados que recebem o segundo salário mais elevado. 
-8. Quais os empregados (id primeiro nome e salario) que recebem acima da média e trabalham no mesmo departamento onde algum nome empregado contenha a letra 'J'.
-9. Quais os empregados (primeiro nome) que trabalham nos departamentos de United Kingdom.
-10. Quais os empregados (primeiro nome, último nome, salário e job id) que recebem acima da média de salários para a sua função.
-
-
-## 2. Operações UNION, INTERSECT e MINUS
+## 2. Anomalias e Níveis de Isolamento
 Em SQL podemos efetuar operações entre vários conjuntos. 
-![image](https://user-images.githubusercontent.com/32137262/197638351-749da169-af37-4809-b1e3-b0e8f4d3fc2f.png)
 
-Exemplos:
-|Operador|Descrição|Exemplo|
-|--------|---------|-------|
-|UNION|Conjunto de tuplos que estão no primeiro e/ou no segundo conjunto, sem duplicados|Obter diferentes nomes de alunos e nomes de professores: ```SELECT nome FROM alunos UNION SELECT nome FROM professores;```|
-|UNION ALL|Conjunto de tuplos que estão no primeiro e/ou no segundo conjunto, incluindo duplicados|Obter nomes de alunos e nomes de professores mantendo repetições entre grupos: ```SELECT nome FROM alunos UNION ALL SELECT nome FROM professores;```|
-|INTERSECT|Conjunto de tuplos que existem simultaneamente no primeiro e no segundo conjuntos.|Obter nomes de alunos que também são nomes de professores: ```SELECT nome FROM alunos INTERSECT SELECT nome FROM professores;```|
-|EXCEPT (MINUS)|Conjunto de tuplos que estão no primeiro conjunto mas não no segundo conjunto|Obter nomes de alunos que não são nomes de professores: ```SELECT nome FROM alunos EXCEPT SELECT nome FROM professores;```|
+## 3. Transações em SQL
+Em SQL podemos efetuar operações entre vários conjuntos. 
 
 ### Exercícios
 Para cada uma das alíneas seguintes, escreva a query que permite obter:
@@ -107,7 +67,7 @@ Para cada uma das alíneas seguintes, escreva a query que permite obter:
 3. A lista de nomes próprios apenas de trabalhadores não managers, i.e. excluindo os nomes de managers.
 
 
-## 3. Trabalho de Casa
+## 4. Trabalho de Casa
 Nesta aula grande parte dos alunos não conseguiram terminar os exercícios propostos. Assim o trabalho de casa serão os 3 últimos exercícios sobre subqueries (1.8, 1.9 e 1.10):
 
 8. Quais os empregados (id primeiro nome e salario) que recebem acima da média e trabalham no mesmo departamento onde algum nome empregado contenha a letra 'J'.
@@ -120,7 +80,7 @@ Bom trabalho!
 
 NOTA: submeta a sua resposta ao trabalho de casa no moodle contendo as queries que respondem às questões num script sql. O ficheiro de texto com o nome TPC_a11_[N_ALUNO].sql (exemplo: TPC_a11_12345.sql para o aluno número 12345).
 
-## 4. Resoluções
+## 5. Resoluções
 [Resolução dos exercícios em aula](https://github.com/ULHT-BD/aula11/blob/main/aula11_resolucao.sql)
 
 ## Bibliografia e Referências
