@@ -58,7 +58,28 @@ Para assegurar a integridade dos dados, a BD deve garantir as propriedades ACID:
 Em SQL podemos efetuar operações entre vários conjuntos. 
 
 ## 3. Transações em SQL
-Em SQL podemos efetuar operações entre vários conjuntos. 
+Em SQL podemos as cláusulas ```START TRANSACTION``` inicia uma transação e a cláusula ```COMMIT``` termina e executa a transação.
+
+``` sql
+START TRANSACTION;
+(sequência de comandos corpo da transação)
+COMMIT;
+```
+
+Exemplo:
+
+<img width="272" alt="image" src="https://user-images.githubusercontent.com/32137262/207200753-1bfd6f09-55b2-4e78-a012-932c35ed8516.png">
+
+Durante a execução de uma transação, podemos anular a sua execução voltando ao estado anterior usando a cláusula ```ROLLBACK```:
+
+``` sql
+START TRANSACTION;
+(sequência de comandos corpo da transação)
+ROLLBACK;
+```
+
+O estado da base de dados é reposto para o ponto anterior à transação.
+Podemos inclusivamente definir pontos chave (savepoints) até onde queremos reverter usando a cláusula ```SAVEPOINT nome-savepoint```. Podemos escolher até onde deve ir o rollback usando ```ROLLBACK TO SAVEPOINT nome-savepoint```.
 
 ### Exercícios
 Para cada uma das alíneas seguintes, escreva a query que permite obter:
