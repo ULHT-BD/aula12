@@ -1,16 +1,16 @@
-# aula13
-Nesta aula introduzimos as vantagens e utilização de PL/SQL. Falamos sobre estruturas básicas Stored Procedures, Stored Functions e Triggers e apresentamos clausulas para controlo de fluxo (if, case, while e loop).
+# aula12
+Nesta introduzimos o conceito de transação, propriedades ACID e níveis de isolamento. Aprendemos ainda as cláusulas SQL que nos permitem criar e executar transações bem como configurar diferentes níveis de isolamento.
 Bom trabalho!
 
 [0. Requisitos](#0-requisitos)
 
-[1. Stored Procedures](#1-stored-procedures)
+[1. Transação e Propriedades Acid](#1-transação-e-propriedades-acid)
 
-[2. Functions](#2-functions)
+[2. Anomalias e Níveis de Isolamento](#2-anomalias-e-níveis-de-isolamento)
 
-[3. Condições IF e CASE](#3-condições-if-e-case)
+[3. Transações em SQL](#3-transações-em-sql)
 
-[4. Ciclos WHILE e LOOP](#4-ciclos-while-e-loop)
+[4. Trabalho de Casa](#4-trabalho-de-casa)
 
 [5. Resoluções](#5-resoluções)
 
